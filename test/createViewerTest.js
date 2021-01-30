@@ -15,7 +15,7 @@ const testImage3DPath2 = 'base/test/data/input/mri3D.nrrd'
 import createViewerBaseline from './data/baseline/createViewer.png'
 import createViewerSetImageBaseline from './data/baseline/createViewerSetImage.png'
 
-const TEST_STYLE_CONTAINER = {
+const TEST_STYLE_RENDERING_VIEW_CONTAINER = {
   position: 'relative',
   width: '600px',
   height: '600px',
@@ -31,11 +31,11 @@ const TEST_STYLE_CONTAINER = {
 }
 const TEST_VIEWER_STYLE = {
   backgroundColor: [1, 1, 1],
-  containerStyle: TEST_STYLE_CONTAINER,
+  containerStyle: TEST_STYLE_RENDERING_VIEW_CONTAINER,
 }
 
 const baselineConfig = JSON.parse(
-  '{"viewerConfigVersion":"0.1","containerStyle":{"position":"relative","width":"600px","height":"600px","minHeight":"600px","minWidth":"600px","maxHeight":"600px","maxWidth":"600px","margin":"0","padding":"0","top":"0","left":"0","overflow":"hidden"},"main":{"backgroundColor":[0.7,0.2,0.8],"units":"mm"}}'
+  '{"viewerConfigVersion":"1.0","renderingViewContainerStyle":{"position":"relative","width":"600px","height":"600px","minHeight":"600px","minWidth":"600px","maxHeight":"600px","maxWidth":"600px","margin":"0","padding":"0","top":"0","left":"0","overflow":"hidden"},"main":{"backgroundColor":[0.7,0.2,0.8],"units":"mm"}}'
 )
 
 test('Test createViewer', async t => {
@@ -70,7 +70,7 @@ test('Test createViewer', async t => {
     labelImage: itkLabelImage,
     rotate: false,
   })
-  viewer.setContainerStyle(TEST_VIEWER_STYLE.containerStyle)
+  viewer.setRenderingViewContainerStyle(TEST_VIEWER_STYLE.containerStyle)
   viewer.setBackgroundColor(TEST_VIEWER_STYLE.backgroundColor)
 
   const uiContainer =
@@ -346,7 +346,7 @@ test('Test createViewer.setImage', async t => {
     image: itkImage,
     rotate: false,
   })
-  viewer.setContainerStyle(TEST_VIEWER_STYLE.containerStyle)
+  viewer.setRenderingViewContainerStyle(TEST_VIEWER_STYLE.containerStyle)
   viewer.setBackgroundColor(TEST_VIEWER_STYLE.backgroundColor)
   const response2 = await axios.get(testImage3DPath2, {
     responseType: 'arraybuffer',

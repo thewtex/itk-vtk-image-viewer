@@ -20,9 +20,9 @@ changes with incompatible configuration -- a viewer will only use a
 configuration that has the same major version. The minor version indicates
 supported configuration entries.
 
-### containerStyle
+### renderingViewContainerStyle
 
-CSS style of the container (`div`) for the viewer.
+CSS style of the container (`div`) for the rendering views.
 
 ## Main Config
 

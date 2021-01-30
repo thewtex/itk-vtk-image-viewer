@@ -3,7 +3,7 @@ import LayersMachineContext from './LayersMachineContext'
 import ImagesMachineContext from './ImagesMachineContext'
 import WidgetsMachineContext from './WidgetsMachineContext'
 
-const defaultContainerStyle = {
+const defaultRenderingViewContainerStyle = {
   position: 'relative',
   width: '100%',
   height: 'auto',
@@ -29,7 +29,7 @@ class ViewerMachineContext {
       parseInt(config.viewerConfigVersion.split('.')[0]) ===
         parseInt(this.viewerConfigVersion.split('.')[0])
     ) {
-      this.containerStyle = config.containerStyle
+      this.renderingViewContainerStyle = config.renderingViewContainerStyle
       // Todo: more
 
       this.main = new MainMachineContext(config.main)
@@ -47,7 +47,7 @@ class ViewerMachineContext {
     const config = {
       viewerConfigVersion: this.viewerConfigVersion,
 
-      containerStyle: { ...this.containerStyle },
+      renderingViewContainerStyle: { ...this.renderingViewContainerStyle },
 
       main: this.main.getConfig(),
     }
@@ -62,7 +62,7 @@ class ViewerMachineContext {
   container = null
 
   // Version for compatibility check
-  viewerConfigVersion = '0.1'
+  viewerConfigVersion = '1.0'
 
   // Unique identifier used to identify a viewer in the DOM when multiple are
   // on a page
@@ -71,8 +71,11 @@ class ViewerMachineContext {
   // A 2D viewer versus a 3D viewer
   use2D = false
 
-  // Style of the container for the viewer
-  containerStyle = defaultContainerStyle
+  // Container's (html div's) containing rendering views
+  renderingViewContainers = new Map()
+
+  // Style of the container for the rendering views
+  renderingViewContainerStyle = defaultRenderingViewContainerStyle
 
   // Is a "dark mode" enabled in the user interface?
   uiDarkMode = false

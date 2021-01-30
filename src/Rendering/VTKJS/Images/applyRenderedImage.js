@@ -42,7 +42,9 @@ function applyRenderedImage(context, event) {
       context.itkVtkView.setViewMode('Volume')
     }
 
-    const annotationContainer = context.container.querySelector('.js-se')
+    const annotationContainer = context.renderingViewContainers
+      .get('volume')
+      .querySelector('.js-se')
     annotationContainer.style.fontFamily = 'monospace'
   }
 

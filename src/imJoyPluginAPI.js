@@ -7,8 +7,13 @@ const imJoyPluginAPI = {
   },
 
   async run(ctx) {
+    let uiMachineOptions = null
+    if (!!ctx.data.uiMachineOptions) {
+      uiMachineOptions = ctx.data.uiMachineOptions
+      console.log('uiMachineOptions', uiMachineOptions)
+    }
     if (ctx.data && ctx.data.image) {
-      if (ctx.config && !this.viewer) {
+      if (ctx.config || ctx.data.uiMachineOptions) {
         const multiscaleImage = await itkVtkViewer.utils.toMultiscaleChunkedImage(
           ctx.data.image
         )
@@ -20,11 +25,12 @@ const imJoyPluginAPI = {
           use2D: is2D,
           rotate: false,
           config: ctx.config,
+          uiMachineOptions,
         })
       } else {
         await this.setImage(ctx.data.image)
       }
-    } else if (ctx.config && !this.viewer) {
+    } else if (ctx.config || ctx.data.uiMachineOptions) {
       this.viewer = await itkVtkViewer.createViewer(container, {
         image: multiscaleImage,
         pointSets: null,
@@ -32,6 +38,7 @@ const imJoyPluginAPI = {
         use2D: is2D,
         rotate: false,
         config: ctx.config,
+        uiMachineOptions,
       })
     }
   },

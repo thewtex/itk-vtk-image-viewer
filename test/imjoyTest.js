@@ -6,9 +6,61 @@ import vtkITKHelper from 'vtk.js/Sources/Common/DataModel/ITKHelper'
 import testUtils from 'vtk.js/Sources/Testing/testUtils'
 
 import UserInterface from '../src/UserInterface'
+import referenceUIMachineOptions from '../src/UI/Reference/referenceUIMachineOptions'
 
 const testImage3DPath = 'base/test/data/input/HeadMRVolume.nrrd'
 const testImage3DPath2 = 'base/test/data/input/mri3D.nrrd'
+
+import createScreenshotButton from '../src/UI/Reference/Main/createScreenshotButton'
+import createFullscreenButton from '../src/UI/Reference/Main/createFullscreenButton'
+import createRotateButton from '../src/UI/Reference/Main/createRotateButton'
+import createAnnotationsButton from '../src/UI/Reference/Main/createAnnotationsButton'
+import createAxesButton from '../src/UI/Reference/Main/createAxesButton'
+import createViewPlanesToggle from '../src/UI/Reference/Main/createViewPlanesToggle'
+import createPlaneSliders from '../src/UI/Reference/Main/createPlaneSliders'
+import createBackgroundColorButton from '../src/UI/Reference/Main/createBackgroundColorButton'
+import createCroppingButtons from '../src/UI/Reference/Main/createCroppingButtons'
+import createViewModeButtons from '../src/UI/Reference/Main/createViewModeButtons'
+import createResetCameraButton from '../src/UI/Reference/Main/createResetCameraButton'
+
+function modifiedCreateMainInterface(context) {
+  const mainUIGroup = document.createElement('div')
+  mainUIGroup.setAttribute('class', style.uiGroup)
+  context.uiGroups.set('main', mainUIGroup)
+
+  const mainUIRow1 = document.createElement('div')
+  mainUIRow1.setAttribute('class', style.mainUIRow)
+  mainUIGroup.appendChild(mainUIRow1)
+
+  createScreenshotButton(context, mainUIRow1)
+  // Leave out the fullscreen button
+  //createFullscreenButton(context, mainUIRow1)
+  //if (!context.use2D) {
+  //createRotateButton(context, mainUIRow1)
+  //}
+  //createAnnotationsButton(context, mainUIRow1)
+  createAxesButton(context, mainUIRow1)
+  createViewPlanesToggle(context, mainUIRow1)
+  // Leave out the plane sliders
+  // createPlaneSliders(context)
+
+  createBackgroundColorButton(context, mainUIRow1)
+  const mainUIRow2 = document.createElement('div')
+  mainUIRow2.setAttribute('class', style.mainUIRow)
+
+  if (context.use2D) {
+    createCroppingButtons(context, mainUIRow1)
+    createViewModeButtons(context, mainUIRow2)
+    createResetCameraButton(context, mainUIRow1)
+  } else {
+    createCroppingButtons(context, mainUIRow2)
+    createViewModeButtons(context, mainUIRow2)
+    createResetCameraButton(context, mainUIRow2)
+    mainUIGroup.appendChild(mainUIRow2)
+  }
+
+  context.uiContainer.appendChild(mainUIGroup)
+}
 
 import * as imjoyCore from 'imjoy-core'
 import ndarray from 'ndarray'
@@ -50,7 +102,7 @@ const testConfig = JSON.parse(
 )
 
 test('Test ImJoy Plugin', async t => {
-  t.plan(5)
+  t.plan(6)
   const gc = testUtils.createGarbageCollector(t)
 
   const container = document.querySelector('body')
@@ -67,6 +119,17 @@ test('Test ImJoy Plugin', async t => {
   )
   webWorker.terminate()
   const array = ndarray(itkImage.data, itkImage.size.slice().reverse())
+
+  const uiMachineOptions = { ...referenceUIMachineOptions }
+  function testCreateMainInterface(context) {
+    t.pass('Modified ui createMainInterface')
+    modifiedCreateMainInterface(context)
+  }
+  const testUIMainActions = { ...uiMachineOptions.main.actions }
+  testUIMainActions.createMainInterface = testCreateMainInterface
+  const testUIMain = { ...uiMachineOptions.main }
+  testUIMain.actions = testUIMainActions
+  uiMachineOptions.main = testUIMain
 
   const imjoy_api = {
     showMessage(plugin, info, duration) {
@@ -87,6 +150,8 @@ test('Test ImJoy Plugin', async t => {
   const viewer = await imjoy.pm.createWindow(null, {
     src: 'http://localhost:9876/base/dist/index.html',
     data: { image: itkImage },
+    // Stalls
+    //uiMachineOptions },
     config: testConfig,
   })
   await viewer.setImage(encodeArray(array))
@@ -104,9 +169,9 @@ test('Test ImJoy Plugin', async t => {
   await viewer.setImage(imageURL)
   t.pass('setImage URL')
 
-  imjoy.destroy()
+  //imjoy.destroy()
   console.log('ImJoy destroyed')
 
   t.pass('test completed')
-  gc.releaseResources()
+  //gc.releaseResources()
 })

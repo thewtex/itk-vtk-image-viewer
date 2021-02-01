@@ -174,7 +174,7 @@ const createViewer = async (
   }
 
   const options = { ...viewerMachineOptions }
-  if (typeof uiMachineOptions !== 'undefined') {
+  if (!!uiMachineOptions) {
     options.ui = uiMachineOptions
   }
   const context = new ViewerMachineContext(config)
